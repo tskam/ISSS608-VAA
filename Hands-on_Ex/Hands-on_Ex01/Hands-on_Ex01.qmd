@@ -1,6 +1,7 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Dr. Kam Tin Seong"
+date: "`r Sys.Date()`"
 ---
 
 # Getting Started
@@ -12,6 +13,9 @@ The code chunk below uses p_load() of pacman package to check if tidyverse packa
 ```{r}
 pacman::p_load(tidyverse)
 ```
+
+
+
 
 ## Importing the data
 
