@@ -26,5 +26,12 @@
     "title": "In-class Exercise",
     "section": "",
     "text": "Installing and loading R packages\nTwo packages will be installed and loaded. They are: tidyverse and ggiraph.\n\npacman::p_load(ggiraph, tidyverse)\n\nImporting data\n\nexam_data <- read_csv(\"data/Exam_data.csv\")\n\n\nggplot(data = exam_data, \n       aes(x = MATHS)) +\n  geom_dotplot(dotsize = 0.5)\n\n\n\n\n\np <- ggplot(data=exam_data, \n       aes(x = MATHS)) +\n  geom_dotplot_interactive(\n    aes(tooltip = ID),\n    stackgroups = TRUE, \n    binwidth = 1, \n    method = \"histodot\") +\n  scale_y_continuous(NULL, \n                     breaks = NULL)\ngirafe(\n  ggobj = p,\n  width_svg = 6,\n  height_svg = 6*0.618\n)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04.html",
+    "href": "In-class_Ex/In-class_Ex04.html",
+    "title": "In-class Exercise 4",
+    "section": "",
+    "text": "pacman::p_load(plotly, DT, patchwork, tidyverse)\n\n\nexam_data <- read_csv(\"data/Exam_data.csv\")\n\n\nplot_ly(data = exam_data, \n        x = ~ENGLISH, \n        y = ~MATHS, \n        color = ~RACE) #<<"
   }
 ]
