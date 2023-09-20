@@ -121,25 +121,3 @@ ggplot(my_sum) +
            alpha=1)
 ```
 
-## Interactive version
-
-```{r}
-p <- ggplot(my_sum) +
-  geom_errorbar(
-    aes(x=RACE, 
-        ymin=mean-se, 
-        ymax=mean+se), 
-    width=0.2, 
-    colour="black", 
-    alpha=0.9, 
-    size=0.5) +
-  geom_point(aes
-           (x=RACE, 
-            y=mean), 
-           stat="identity", 
-           color="red",
-           size = 1.5,
-           alpha=1)
-
-ggplotly(p)
-```
