@@ -1,0 +1,38 @@
+---
+title: "In-class Exercise 1"
+date: "January 12, 2024"
+date-modified: "last-modified"
+execute: 
+  echo: true
+  eval: true
+  warning: false
+editor: visual  
+---
+
+## Loading R Packages
+
+```{r}
+pacman::p_load(tidyverse, haven)
+```
+
+## Import PISA data
+
+```{r}
+#| eval: false
+stu_qqq <- read_sas(data_file = "data/cy08msp_stu_qqq.sas7bdat")
+```
+
+```{r}
+#| eval: false
+stu_qqq_SG <- stu_qqq %>%
+  filter(CNT == "SGP")
+```
+
+```{r}
+#| eval: false
+write_rds(stu_qqq_SG, "data/stu_qqq_SG.rds")
+```
+
+```{r}
+stu_qqq_SG <- read_rds("data/stu_qqq_SG.rds")
+```
