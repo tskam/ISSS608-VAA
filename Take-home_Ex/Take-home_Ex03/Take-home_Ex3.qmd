@@ -1,0 +1,6 @@
+---
+title: "Take-home Exercise 3: Be Weatherwise or Otherwise"
+author: "Dr. Kam Tin Seong"
+date: "January 31, 2024"
+date-modified: "last-modified"
+---

@@ -1,6 +1,10 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Dr. Kam Tin Seong"
+format:
+  html:
+    mermaid:
+      theme: neutral
 date: "`r Sys.Date()`"
 ---
 
@@ -14,9 +18,6 @@ The code chunk below uses p_load() of pacman package to check if tidyverse packa
 pacman::p_load(tidyverse)
 ```
 
-
-
-
 ## Importing the data
 
 ```{r}
@@ -29,4 +30,38 @@ exam_data <- read_csv("data/Exam_data.csv")
 ggplot(data = exam_data,
        aes(x = RACE)) +
   geom_bar() 
+```
+
+Flow diagram
+
+```{mermaid}
+flowchart LR
+  A[Student \nPISA Survey] --> B{Student \nSingapore}
+  B --> C(School)
+  B --> D(Socioeconomic)
+  B --> E(Gender)
+  C --> F{Performance}
+  D --> F{Performance}
+  E --> F{Performance \nany correlation?}
+  F --> G(Maths)
+  F --> H(Reading)
+  F --> I(Science)
+```
+
+
+```{mermaid}
+{mermaid}
+%%| fig-width: 7
+%%| echo: false
+flowchart LR
+  A(Student \nPISA Survey \n2022) --> B{Student \n(Singapore)}
+  B --> C(School)
+  B --> D(Socioeconomic)
+  B --> E(Gender)
+  C -->| F{Performance}
+  D -->|\nany correlation?| F{Performance}
+  E -->| F{Performance}
+  F --> G(Maths)
+  F --> H(Reading)
+  F --> I(Science)
 ```
