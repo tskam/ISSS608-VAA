@@ -75,5 +75,26 @@
     "title": "ISSS608-VAA",
     "section": "",
     "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
+    "title": "Horizon Plot",
+    "section": "",
+    "text": "pacman::p_load(ggHoriPlot, ggthemes, tidyverse)\n\n\naverp &lt;- read_csv(\"data/AVERP.csv\") %&gt;%\n  mutate(`Date` = dmy(`Date`))\n\n\naverp %&gt;% \n  filter(Date &gt;= \"2018-01-01\") %&gt;%\n  ggplot() +\n  geom_horizon(aes(x = Date, y=Values), \n               origin = \"midpoint\", \n               horizonscale = 6)+\n  facet_grid(`Consumer Items`~.) +\n    theme_few() +\n  scale_fill_hcl(palette = 'RdBu') +\n  theme(panel.spacing.y=unit(0, \"lines\"), strip.text.y = element_text(\n    size = 5, angle = 0, hjust = 0),\n    legend.position = 'none',\n    axis.text.y = element_blank(),\n    axis.text.x = element_text(size=7),\n    axis.title.y = element_blank(),\n    axis.title.x = element_blank(),\n    axis.ticks.y = element_blank(),\n    panel.border = element_blank()\n    ) +\n    scale_x_date(expand=c(0,0), date_breaks = \"3 month\", date_labels = \"%b%y\") +\n  ggtitle('Average Retail Prices of Selected Consumer Items (Jan 2018 to Dec 2022)')"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex07/In-class_Ex07-IsoMap.html",
+    "href": "In-class_Ex/In-class_Ex07/In-class_Ex07-IsoMap.html",
+    "title": "In-class Exercise 7",
+    "section": "",
+    "text": "pacman::p_load(sf, terra, gstat, tmap, \n               viridis, tidyverse)\n\n\nrfstations &lt;- read.csv(\"data/aspatial/RainfallStation.csv\")\n\n\nrfdata &lt;- read_csv(\"data/aspatial/DAILYDATA_202402.csv\") %&gt;%\n  select(c(1, 5)) %&gt;%\n  group_by(Station) %&gt;%\n  summarise(MONTHSUM = sum(`Daily Rainfall Total (mm)`)) %&gt;%\n  ungroup()\n\n\nrfdata &lt;- rfdata %&gt;%\n  left_join(rfstations)\n\n\nrfdata_sf &lt;- st_as_sf(rfdata, \n                      coords = c(\"Longitude\",\n                                 \"Latitude\"),\n                      crs= 4326) %&gt;%\n  st_transform(crs = 3414)\n\n\nmpsz2019 &lt;- st_read(dsn = \"data/geospatial\", \n                    layer = \"MPSZ-2019\") %&gt;%\n  st_transform(crs = 3414)\n\nReading layer `MPSZ-2019' from data source \n  `D:\\tskam\\ISSS608-VAA\\In-class_Ex\\In-class_Ex07\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 332 features and 6 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775\nGeodetic CRS:  WGS 84\n\n\n\ntmap_options(check.and.fix = TRUE)\ntmap_mode(\"view\")\ntm_shape(mpsz2019) +\n  tm_borders() +\ntm_shape(rfdata_sf) +\n  tm_dots(col = 'MONTHSUM')\n\n\n\n\ntmap_mode(\"plot\")\n\n\ngrid &lt;- terra::rast(mpsz2019, \n                    nrows = 690, \n                    ncols = 1075)\n\nxy &lt;- terra::xyFromCell(grid, \n                        1:ncell(grid))\n\n\ncoop &lt;- st_as_sf(as.data.frame(xy), \n                 coords = c(\"x\", \"y\"),\n                 crs = st_crs(mpsz2019))\ncoop &lt;- st_filter(coop, mpsz2019)\n\n# qtm(coop)\n\n\nres &lt;- gstat(formula = MONTHSUM ~ 1, \n             locations = rfdata_sf, \n             nmax = 15,\n             set = list(idp = 0))\n\nresp &lt;- predict(res, coop)\n\n[inverse distance weighted interpolation]\n\nresp$x &lt;- st_coordinates(resp)[,1]\nresp$y &lt;- st_coordinates(resp)[,2]\nresp$pred &lt;- resp$var1.pred\n\npred &lt;- terra::rasterize(resp, grid, \n                         field = \"pred\", \n                         fun = \"mean\")\n\n\ntmap_options(check.and.fix = TRUE)\ntmap_mode(\"plot\")\ntm_shape(pred) + \n  tm_raster(alpha = 0.6, \n            palette = \"viridis\")\n\n\n\n\n\n\n\n\n\nv &lt;- variogram(log(MONTHSUM) ~ 1, \n               data = rfdata_sf)\nplot(v)\n\n\n\n\n\n\n\n\n\nfv &lt;- fit.variogram(object = v,\n                    model = vgm(psill = 0.5, model = \"Sph\",\n                                range = 900, nugget = 0.1))\nfv\n\n  model psill range\n1   Nug   0.1     0\n2   Sph   0.5   900\n\nplot(v, fv, cex = 1.5)\n\n\n\n\n\n\n\n\n\nk &lt;- gstat(formula = log(MONTHSUM) ~ 1, \n           data = rfdata_sf, \n           model = fv)\n\n\nresp &lt;- predict(k, coop)\n\n[using ordinary kriging]\n\nresp$x &lt;- st_coordinates(resp)[,1]\nresp$y &lt;- st_coordinates(resp)[,2]\nresp$pred &lt;- resp$var1.pred\n\nkpred &lt;- terra::rasterize(resp, grid, \n                         field = \"pred\")\n\n\ntmap_options(check.and.fix = TRUE)\ntmap_mode(\"plot\")\ntm_shape(kpred) + \n  tm_raster(alpha = 0.6, \n            palette = \"viridis\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex07/data/geospatial/MPSZ-2019.html",
+    "href": "In-class_Ex/In-class_Ex07/data/geospatial/MPSZ-2019.html",
+    "title": "ISSS608-VAA",
+    "section": "",
+    "text": "&lt;!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’&gt;     dataset\n\n\n        0 0     false"
   }
 ]
