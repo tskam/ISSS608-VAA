@@ -1,0 +1,40 @@
+project:
+  type: website
+
+website:
+  title: "ISSS608-VAA"
+  navbar:
+    left: 
+      - text: "Hands-on Exercise"
+        menu: 
+          - text: "Hands-on Exercise 1"
+            href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+      - text: "In-class Exercise"
+        menu: 
+          - text: "In-class Exercise 1"
+            href: "In-class_Ex/In-clase_Ex01"
+          - text: "In-class Exercise 2: Visualising Disitribution"
+            href: "In-class_Ex/In-class_Ex02.html"
+          - text: "In-class Exercise 4"
+            href: "In-class_Ex/In-class_Ex04.html"
+          - text: "In-class Exercise 5"
+            href: "In-class_Ex/In-class_Ex05.html"
+          - text: "In-class Exercise 10: Quarto Dashboard"
+            href: "In-class_Ex/In-class_Ex10.html"
+      - text: "Take-home Exercise"
+        menu: 
+          - text: "Take-home Exercise 1"
+            href: "Take-home_Ex/Take-home_Ex01"
+    right: 
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
+format:
+  html:
+    theme: darkly
+    css: styles.css
+    toc: true
+
+editor: visual
+
