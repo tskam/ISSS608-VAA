@@ -1,0 +1,110 @@
+---
+title: "In-class Exercise 4"
+author: Dr. Kam Tin Seong
+date: "May 3, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+```{r}
+pacman::p_load(tidyverse, ggstatsplot)
+```
+
+```{r}
+exam <- read_csv("data/Exam_data.csv")
+```
+
+```{r}
+set.seed(1234)
+
+gghistostats(
+  data = exam,
+  x = ENGLISH,
+  type = "parametric",
+  test.value = 60,
+  bin.args = list(color = "black", 
+                  fill = "grey50", 
+                  alpha = 0.7),
+  normal.curve = FALSE,
+  normal.curve.args = list(linewidth = 2),
+  xlab = "English scores"
+)
+```
+
+```{r}
+ggdotplotstats(
+  data = exam,
+  x = ENGLISH,
+  y = CLASS,
+  title = "Fuel economy data",
+  xlab = "city miles per gallon"
+)
+```
+
+
+
+
+
+
+```{r}
+ggbetweenstats(
+  data = exam,
+  x = GENDER, 
+  y = MATHS,
+  type = "p",
+  messages = FALSE
+)
+```
+
+```{r}
+exam_long <- exam %>%
+  pivot_longer(
+    cols = ENGLISH:SCIENCE,
+    names_to = "SUBJECT",
+    values_to = "SCORES") %>%
+  filter(CLASS == "3A")
+```
+
+```{r}
+ggwithinstats(
+  data = filter(exam_long, 
+                SUBJECT %in% 
+                  c("MATHS", "SCIENCE")),
+  x    = SUBJECT,
+  y    = SCORES,
+  type = "p"
+)
+```
+
+```{r}
+ggscatterstats(
+  data = exam,
+  x = MATHS,
+  y = ENGLISH,
+  marginal = TRUE,
+  label.var = ID,
+  label.expression = ENGLISH > 90 & MATHS > 90,
+  )
+```
+
+```{r}
+wp <- read_csv("data/WHData-2018.csv")
+```
+
+```{r}
+ggcorrmat(
+  data = wp, 
+  cor.vars = Dystopia:"Perceptions of corruption")
+```
+
+
+
+
+
+
+
+
